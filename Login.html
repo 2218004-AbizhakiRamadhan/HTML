@@ -197,8 +197,32 @@
 
         function resetPassword() {
             // Logika untuk mengatur ulang kata sandi
-            alert('Fungsi untuk mengatur ulang kata sandi akan ditambahkan di sini.');
+            alert();
         }
+
+    window.onload = function () {
+        var storedUsername = localStorage.getItem('username');
+        var storedPassword = localStorage.getItem('password');
+        if (storedUsername && storedPassword) {
+            document.getElementById('username').value = storedUsername;
+            document.getElementById('password').value = storedPassword;
+        }
+    };
+
+    function validateForm() {
+        var username = document.getElementById('username').value;
+        var password = document.getElementById('password').value;
+
+        if (username === '' || password === '') {
+            document.getElementById('popup').style.display = 'block';
+            return false;
+        }
+
+        localStorage.setItem('username', username);
+        localStorage.setItem('password', password);
+
+        return true;
+    }
     </script>
 </body>
 
