@@ -1,6 +1,6 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <link rel="icon" href="image tugas/logo flash.png" />
     <title>Login</title>
@@ -132,36 +132,64 @@
         }
     </style>
 </head>
-
 <body>
+    <?php
+    session_start(); 
+
+    // Data pengguna yang di-hardcode
+    $valid_username = "gym";
+    $valid_password = "yaudahayo";
+
+    // Menangani data yang dikirim form
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+        $username = $_POST['username'];
+        $password = $_POST['password'];
+
+        // Validasi username dan password
+        if ($username == $valid_username && $password == $valid_password) {
+            $_SESSION['logged_in'] = true;
+            $_SESSION['username'] = $username;
+            // Redirect ke halaman lain atau tampilkan pesan berhasil
+            echo "<script>alert('Login berhasil!'); window.location.href = 'dashboard.php';</script>";
+        } else {
+            echo "<script>alert('Username atau password salah!');</script>";
+        }
+    }
+
+    // Logout dari sesi
+    if (isset($_GET['action']) && $_GET['action'] == 'logout') {
+        session_destroy();
+        echo "<script>alert('Logout berhasil!'); window.location.href = 'login.php';</script>";
+    }
+    ?>
     <div class="container">
         <div class="content">
             <h1>LOGIN FLASH GYM</h1>
             <p>Sudah Siap Angkat Beban?</p>
-            <form action="" method="post" onsubmit="return validateForm()">
-                <input type="text" name="username" id="username" placeholder="Username" required>
-                <input type="password" name="password" id="password" placeholder="Password" required>
+            <form action="" method="post">
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
                 <button type="submit">Login</button>
             </form>
             <p></p>
             <nav>
-                <span> Lupa Password ?</span> <a onclick="openRecoveryPopup()">Recovery</a>
+                <span>Lupa Password?</span> <a onclick="openRecoveryPopup()">Recovery</a>
             </nav>
             <p></p>
             <nav>
-                <span>Buat Member</span> <a href="Register.html" class="register">Register</a>
+                <span>Buat Member</span> <a href="Register.php" class="register">Register</a>
             </nav>
         </div>
     </div>
 
-    <!-- Pop-up untuk Lupa Password -->
+    <!-- Popup untuk Lupa Password -->
     <div class="popup" id="recoveryPopup">
         <div class="popup-content">
-            <span class="close-btn" onclick="closeRecoveryPopup()">x</span> <!-- Panggil fungsi closeRecoveryPopup saat tombol close diklik -->
+            <span class="close-btn" onclick="closeRecoveryPopup()">x</span>
             <h2>Lupa Password</h2>
             <p>Masukkan alamat email Anda untuk mengatur ulang kata sandi.</p>
             <input type="email" placeholder="Alamat Email" required>
-            <button type="button" onclick="resetPassword()">Kirim</button> <!-- Panggil fungsi resetPassword saat tombol kirim diklik -->
+            <button type="button" onclick="resetPassword()">Kirim</button>
         </div>
     </div>
 
@@ -225,5 +253,5 @@
     }
     </script>
 </body>
-
 </html>
+

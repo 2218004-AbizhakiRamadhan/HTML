@@ -1,3 +1,12 @@
+<?php
+session_start();
+
+// untuk memeriksa apakah pengguna sudah login. Jika tidak, arahkan ke halaman login.
+if (!isset($_SESSION['logged_in'])) {
+    header('Location: login.php'); 
+    exit();
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,16 +20,16 @@
         <a href="#" class="navbar-brand">Rencana Latihan Gym</a>
         <ul class="navbar-nav">
             <li class="nav-item">
-                <a href="dashboard.html" class="nav-link">Dashboard</a>
+                <a href="dashboard.php" class="nav-link">Dashboard</a>
             </li>
             <li class="nav-item">
-                <a href="rencana.html" class="nav-link">Rencana Latihan</a>
+                <a href="rencana.php" class="nav-link">Rencana Latihan</a>
             </li>
             <li class="nav-item">
-                <a href="hasil-latihan.html" class="nav-link">Hasil Latihan</a>
+                <a href="hasil-latihan.php" class="nav-link">Hasil Latihan</a>
             </li>
             <li class="nav-item">
-                <a href="Login.html" class="nav-link">Logout</a>
+                <a href="Login.php" class="nav-link">Logout</a>
             </li>
         </ul>
     </nav>

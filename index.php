@@ -144,8 +144,8 @@
     </div>
 
         <div class="button">
-            <a href="Login.html"><button class="free-trial-btn">LOGIN</button></a>
-            <a href="Register.html"><button class="join-now-btn">JOIN NOW</button></a>
+            <a href="Login.php"><button class="free-trial-btn">LOGIN</button></a>
+            <a href="Register.php"><button class="join-now-btn">JOIN NOW</button></a>
         </div>
     </header>
 
