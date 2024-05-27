@@ -135,27 +135,48 @@
 <body>
     <?php
     session_start(); 
-
-    // Data pengguna yang di-hardcode
-    $valid_username = "gym";
-    $valid_password = "yaudahayo";
-
-    // Menangani data yang dikirim form
+    
+    // Koneksi ke database
+    $servername = "localhost";
+    $username = "root";
+    $password = ""; 
+    $dbname = "flashgym";
+    
+    $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    if ($conn->connect_error) {
+        die("Koneksi gagal: " . $conn->connect_error);
+    }
+    
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $username = $_POST['username'];
         $password = $_POST['password'];
-
-        // Validasi username dan password
-        if ($username == $valid_username && $password == $valid_password) {
-            $_SESSION['logged_in'] = true;
-            $_SESSION['username'] = $username;
-            // Redirect ke halaman lain atau tampilkan pesan berhasil
-            echo "<script>alert('Login berhasil!'); window.location.href = 'dashboard.php';</script>";
+    
+        // Query ke database untuk mengambil data pengguna
+        $stmt = $conn->prepare("SELECT id, username, password FROM user WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        
+        if ($result->num_rows == 1) {
+            $row = $result->fetch_assoc();
+            // Verifikasi password
+            if (password_verify($password, $row['password'])) {
+                $_SESSION['logged_in'] = true;
+                $_SESSION['user_id'] = $row['id'];
+                $_SESSION['username'] = $row['username'];
+                // Redirect ke halaman dashboard atau tampilkan pesan berhasil
+                echo "<script>alert('Login berhasil!'); window.location.href = 'dashboard.php';</script>";
+                exit();
+            } else {
+                echo "<script>alert('Username atau password salah!');</script>";
+            }
         } else {
             echo "<script>alert('Username atau password salah!');</script>";
         }
     }
-
+    
+    $conn->close();    
     // Logout dari sesi
     if (isset($_GET['action']) && $_GET['action'] == 'logout') {
         session_destroy();

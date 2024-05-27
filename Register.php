@@ -49,17 +49,15 @@
             background-color: #f2f2f2;
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
             width: 100%;
             padding: 10px;
             margin-bottom: 10px;
             border: 2px solid #030303;
             border-radius: 10px;
             box-sizing: border-box;
-        }
-
-        input[type="radio"] {
-            margin-right: 5px;
         }
 
         button {
@@ -123,40 +121,25 @@
     <div class="container">
         <h1>Register</h1>
         <p>Silahkan Masukkan Data Diri Anda</p>
-        <table>
-            <tbody>
-                <tr>
-                    <th>Nama Lengkap</th>
-                    <td><input type="text" id="username" name="username" placeholder="Masukkan Nama" required /></td>
-                </tr>
-                <tr>
-                    <th>Umur</th>
-                    <td><input type="text" id="age" name="age" placeholder="Masukkan Umur" required /></td>
-                </tr>
-                <tr>
-                    <th>Jenis Kelamin</th>
-                    <td>
-                        <input type="radio" id="pria" name="Gender" value="pria">
-                        <label for="pria">Pria</label><br>
-                        <input type="radio" id="wanita" name="Gender" value="wanita">
-                        <label for="wanita">Wanita</label><br>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Alamat</th>
-                    <td><input type="text" id="Address" name="Address" placeholder="Masukkan Alamat" required /></td>
-                </tr>
-                <tr>
-                    <th>Email</th>
-                    <td><input type="text" id="email" name="email" placeholder="Masukkan Email" required /></td>
-                </tr>
-                <tr>
-                    <th>No Telp</th>
-                    <td><input type="text" id="Phone" name="Phone" placeholder="Masukkan No Telp" required /></td>
-                </tr>
-            </tbody>
-        </table>
-        <button type="button" onclick="validateForm()">Daftar</button>
+        <form id="registrationForm" method="post" action="register.php">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>Username</th>
+                        <td><input type="text" id="username" name="username" placeholder="Masukkan Nama" required /></td>
+                    </tr>
+                    <tr>
+                        <th>Password</th>
+                        <td><input type="password" id="password" name="password" placeholder="Password Harus di buat" required /></td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td><input type="email" id="email" name="email" placeholder="Masukkan Email" required /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="button" onclick="validateForm()">Daftar</button>
+        </form>
     </div>
 
     <!-- Pop-up box -->
@@ -172,30 +155,77 @@
     <script>
         function validateForm() {
             var username = document.getElementById("username").value;
-            var age = document.getElementById("age").value;
-            var address = document.getElementById("Address").value;
+            var password = document.getElementById("password").value;
             var email = document.getElementById("email").value;
-            var phone = document.getElementById("Phone").value;
 
-            if (username === '' || age === '' || address === '' || email === '' || phone === '') {
+            if (username === '' || password === '' || email === '') {
                 document.getElementById("popup").style.display = "block";
             } else {
-                showSuccessPopup();
+                document.getElementById("registrationForm").submit();
             }
-        }
-
-        function showSuccessPopup() {
-            document.getElementById("successPopup").style.display = "block";
-        }
-
-        function closeSuccessPopup() {
-            document.getElementById("successPopup").style.display = "none";
         }
 
         function closePopup() {
             document.getElementById("popup").style.display = "none";
         }
+
+        function closeSuccessPopup() {
+            document.getElementById("successPopup").style.display = "none";
+        }
     </script>
+    <?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $email = $_POST['email'];
+
+    if (!empty($username) && !empty($password) && !empty($email)) {
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        $servername = "localhost";
+        $db_username = "root";
+        $db_password = "";
+        $dbname = "flashgym";
+
+        // Membuat koneksi ke database
+        $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
+        // Memeriksa koneksi
+        if ($conn->connect_error) {
+            die("Koneksi gagal: " . $conn->connect_error);
+        }
+
+        // Menyiapkan statement SQL untuk memasukkan data ke tabel pengguna
+        $stmt = $conn->prepare("INSERT INTO user (username, password, email) VALUES (?, ?, ?)");
+        if ($stmt === false) {
+            die("Error prepare: " . $conn->error);
+        }
+
+        $bind = $stmt->bind_param("sss", $username, $hashed_password, $email);
+        if ($bind === false) {
+            die("Error bind_param: " . $stmt->error);
+        }
+
+        $exec = $stmt->execute();
+        if ($exec) {
+            echo "<script>
+                    alert('Welcome to Flash GYM');
+                    window.location.href = 'register.php';
+                  </script>";
+        } else {
+            die("Error execute: " . $stmt->error);
+        }
+
+        $stmt->close();
+        $conn->close();
+    } else {
+        echo "<script>
+                document.getElementById('popup').style.display = 'block';
+              </script>";
+    }
+}
+?>
+
 </body>
 
 </html>

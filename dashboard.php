@@ -80,7 +80,7 @@ if (!isset($_SESSION['logged_in'])) {
                 <a href="rencana.php" class="nav-link">Rencana Latihan</a>
             </li>
             <li class="nav-item">
-                <a href="hasil-latihan.php" class="nav-link">Hasil Latihan</a>
+                <a href="hasil.php" class="nav-link">Hasil Latihan</a>
             </li>
             <li class="nav-item">
                 <a href="Logout.php" class="nav-link">Logout</a>
