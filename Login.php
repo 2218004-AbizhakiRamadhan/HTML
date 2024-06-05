@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,7 +84,7 @@
 
         .popup {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
@@ -187,14 +186,14 @@
         <div class="content">
             <h1>LOGIN FLASH GYM</h1>
             <p>Sudah Siap Angkat Beban?</p>
-            <form action="" method="post">
-                <input type="text" name="username" placeholder="Username" required>
-                <input type="password" name="password" placeholder="Password" required>
+            <form action="" method="post" onsubmit="return validateForm()">
+                <input type="text" id="username" name="username" placeholder="Username" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
                 <button type="submit">Login</button>
             </form>
             <p></p>
             <nav>
-                <span>Lupa Password?</span> <a onclick="openRecoveryPopup()">Recovery</a>
+                <span>Lupa Password?</span> <a href="javascript:void(0)" onclick="openRecoveryPopup()">Recovery</a>
             </nav>
             <p></p>
             <nav>
@@ -209,7 +208,7 @@
             <span class="close-btn" onclick="closeRecoveryPopup()">x</span>
             <h2>Lupa Password</h2>
             <p>Masukkan alamat email Anda untuk mengatur ulang kata sandi.</p>
-            <input type="email" placeholder="Alamat Email" required>
+            <input type="email" id="recoveryEmail" placeholder="Alamat Email" required>
             <button type="button" onclick="resetPassword()">Kirim</button>
         </div>
     </div>
@@ -223,6 +222,9 @@
                 document.getElementById('popup').style.display = 'block';
                 return false; 
             }
+
+            localStorage.setItem('username', username);
+            localStorage.setItem('password', password);
 
             return true; 
         }
@@ -246,33 +248,18 @@
 
         function resetPassword() {
             // Logika untuk mengatur ulang kata sandi
-            alert();
+            var email = document.getElementById('recoveryEmail').value;
+            alert('Instruksi reset password telah dikirim ke ' + email);
         }
 
-    window.onload = function () {
-        var storedUsername = localStorage.getItem('username');
-        var storedPassword = localStorage.getItem('password');
-        if (storedUsername && storedPassword) {
-            document.getElementById('username').value = storedUsername;
-            document.getElementById('password').value = storedPassword;
-        }
-    };
-
-    function validateForm() {
-        var username = document.getElementById('username').value;
-        var password = document.getElementById('password').value;
-
-        if (username === '' || password === '') {
-            document.getElementById('popup').style.display = 'block';
-            return false;
-        }
-
-        localStorage.setItem('username', username);
-        localStorage.setItem('password', password);
-
-        return true;
-    }
+        window.onload = function () {
+            var storedUsername = localStorage.getItem('username');
+            var storedPassword = localStorage.getItem('password');
+            if (storedUsername && storedPassword) {
+                document.getElementById('username').value = storedUsername;
+                document.getElementById('password').value = storedPassword;
+            }
+        };
     </script>
 </body>
 </html>
-

@@ -210,7 +210,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if ($exec) {
             echo "<script>
                     alert('Welcome to Flash GYM');
-                    window.location.href = 'register.php';
+                    window.location.href = 'Login.php';
                   </script>";
         } else {
             die("Error execute: " . $stmt->error);

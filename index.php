@@ -97,25 +97,25 @@
         }
 
         .carousel-button {
-            position: absolute;
-            top: 50%;
+            position: fixed;
+            top: 43%;
             transform: translateY(-50%);
             cursor: pointer;
             background-color: rgba(0, 0, 0, 0.5);
             color: #fff;
             border: none;
-            padding: 10px 20px;
+            padding: 10px 10px;
             font-size: 18px;
             z-index: 1;
             border-radius: 50px;
         }
 
         .prev {
-            left: 780px;
+            left: 30%;
         }
 
         .next {
-            right: 780px;
+            right: 30%;
         }
     </style>
 </head>

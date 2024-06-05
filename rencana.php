@@ -67,6 +67,7 @@ function satuRencana($id, $conn) {
     return $rencana;
 }
 
+// Handler untuk POST requests
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Menambah Rencana
     if (isset($_POST['tambah'])) {
@@ -78,8 +79,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     // Mengubah Rencana
     elseif (isset($_POST['ubah'])) {
-        // Periksa apakah data yang diperlukan ada
-        if(isset($_POST['id'], $_POST['nama'], $_POST['deskripsi'], $_POST['durasi'], $_POST['level'])) {
+        if (isset($_POST['id'], $_POST['nama'], $_POST['deskripsi'], $_POST['durasi'], $_POST['level'])) {
             $id = $_POST['id'];
             $nama = $_POST['nama'];
             $deskripsi = $_POST['deskripsi'];
@@ -88,6 +88,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             ubahRencana($id, $nama, $deskripsi, $durasi, $level, $conn);
         }
     }
+}
+
+// Mendapatkan data rencana untuk form edit jika ada parameter id
+$editRencana = null;
+if (isset($_GET['edit'])) {
+    $editRencana = satuRencana($_GET['edit'], $conn);
 }
 
 // Tampilkan semua Rencana
@@ -104,18 +110,19 @@ $rencana = semuaRencana($conn);
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
         .navbar {
             background-color: #333;
-            overflow: hidden;
-            padding: 10px 0;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .navbar-brand {
             color: white;
             text-decoration: none;
             font-size: 24px;
-            padding-left: 20px;
         }
         .navbar-nav {
             list-style: none;
@@ -192,32 +199,53 @@ $rencana = semuaRencana($conn);
             <a href="rencana.php" class="nav-link">Rencana Latihan</a>
         </li>
         <li class="nav-item">
-            <a href="hasil.php" class="nav-link">Hasil Latihan</a>
+            <a href="peralatan.php" class="nav-link">Peralatan</a>
         </li>
         <li class="nav-item">
-            <a href="Logout.php" class="nav-link">Logout</a>
+            <a href="logout.php" class="nav-link">Logout</a>
         </li>
     </ul>
 </nav>
-<h1>Rencana</h1>
-<form method="post">
-    <label for="nama">Nama Rencana:</label><br>
-    <input type="text" id="nama" name="nama" required><br>
-    <label for="deskripsi">Deskripsi:</label><br>
-    <textarea id="deskripsi" name="deskripsi" required></textarea><br>
-    <label for="durasi">Durasi (hari):</label><br>
-    <input type="number" id="durasi" name="durasi" required><br>
-    <label for="level">Level Kesulitan:</label><br>
-    <select id="level" name="level" required>
-        <option value="Mudah">Mudah</option>
-        <option value="Sedang">Sedang</option>
-        <option value="Sulit">Sulit</option>
-    </select><br><br>
-    <button type="submit" name="tambah">Tambah Rencana</button>
-</form>
+
+<?php if ($editRencana): ?>
+    <h2>Edit Rencana</h2>
+    <form method="post">
+        <input type="hidden" name="id" value="<?= $editRencana['id']; ?>">
+        <label for="nama">Nama Rencana:</label><br>
+        <input type="text" id="nama" name="nama" value="<?= $editRencana['nama']; ?>" required><br>
+        <label for="deskripsi">Deskripsi:</label><br>
+        <textarea id="deskripsi" name="deskripsi" required><?= $editRencana['deskripsi']; ?></textarea><br>
+        <label for="durasi">Durasi (hari):</label><br>
+        <input type="number" id="durasi" name="durasi" value="<?= $editRencana['durasi']; ?>" required><br>
+        <label for="level">Level Kesulitan:</label><br>
+        <select id="level" name="level" required>
+            <option value="Mudah" <?= $editRencana['level_kesulitan'] == 'Mudah' ? 'selected' : ''; ?>>Mudah</option>
+            <option value="Sedang" <?= $editRencana['level_kesulitan'] == 'Sedang' ? 'selected' : ''; ?>>Sedang</option>
+            <option value="Sulit" <?= $editRencana['level_kesulitan'] == 'Sulit' ? 'selected' : ''; ?>>Sulit</option>
+        </select><br><br>
+        <button type="submit" name="ubah">Ubah Rencana</button>
+    </form>
+<?php else: ?>
+    <h2>Tambah Rencana</h2>
+    <form method="post">
+        <label for="nama">Nama Rencana:</label><br>
+        <input type="text" id="nama" name="nama" required><br>
+        <label for="deskripsi">Deskripsi:</label><br>
+        <textarea id="deskripsi" name="deskripsi" required></textarea><br>
+        <label for="durasi">Durasi (hari):</label><br>
+        <input type="number" id="durasi" name="durasi" required><br>
+        <label for="level">Level Kesulitan:</label><br>
+        <select id="level" name="level" required>
+            <option value="Mudah">Mudah</option>
+            <option value="Sedang">Sedang</option>
+            <option value="Sulit">Sulit</option>
+        </select><br><br>
+        <button type="submit" name="tambah">Tambah Rencana</button>
+    </form>
+<?php endif; ?>
 
 <h2>Daftar Rencana</h2>
-<table border="1">
+<table border="2">
     <tr>
         <th>Nama</th>
         <th>Deskripsi</th>
@@ -232,14 +260,11 @@ $rencana = semuaRencana($conn);
             <td><?= $r['durasi']; ?></td>
             <td><?= $r['level_kesulitan']; ?></td>
             <td>
-                <form method="post">
+                <form method="post" style="display:inline;">
                     <input type="hidden" name="id" value="<?= $r['id']; ?>">
                     <button type="submit" name="hapus">Hapus</button>
                 </form>
-                <form method="post">
-                    <input type="hidden" name="id" value="<?= $r['id']; ?>">
-                    <button type="submit" name="ubah">Ubah Rencana</button>
-                </form>
+                <a href="?edit=<?= $r['id']; ?>"><button type="submit">Ubah</button></a>
             </td>
         </tr>
     <?php endforeach; ?>
